@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grok Pro Tracker</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #050505;
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Thanh cuộn hiện đại */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        /* Hiệu ứng Kính (Glassmorphism) */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .glass-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .glass-card:hover {
+            background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Hoạt ảnh (Animations) */
+        .fade-in-up {
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Chữ phát sáng mượt mà */
+        .text-glow {
+            text-shadow: 0 0 24px rgba(56, 189, 248, 0.4);
+        }
+
+        /* Hiệu ứng zoom in / zoom out (thở) động cho chữ số */
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.2)); }
+            50% { transform: scale(1.1); filter: drop-shadow(0 0 30px rgba(56, 189, 248, 0.7)); }
+        }
+        .breathe {
+            animation: breathe 1.5s ease-in-out infinite;
+            display: inline-block;
+            will-change: transform;
+        }
+
+        .blink { animation: blinker 1.5s ease-in-out infinite; }
+        @keyframes blinker { 
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.2; } 
+        }
+
+        /* Khối màu nền động */
+        .bg-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -1;
+            animation: float 10s ease-in-out infinite alternate;
+        }
+        .orb-1 { width: 400px; height: 400px; top: -100px; left: -100px; background: rgba(59, 130, 246, 0.15); }
+        .orb-2 { width: 500px; height: 500px; bottom: -200px; right: -100px; background: rgba(139, 92, 246, 0.1); animation-delay: -5s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, 50px) scale(1.1); }
+        }
+    </style>
+</head>
+<body class="min-h-screen relative flex justify-center p-4 sm:p-8">
+
+    <!-- Nền động -->
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+
+    <div class="w-full max-w-4xl relative z-10 flex flex-col pt-8 pb-16">
+        
+        <!-- Header -->
+        <header class="mb-10 text-center fade-in-up" style="animation-delay: 0s;">
+            <div class="inline-flex items-center justify-center p-3 rounded-2xl bg-white/5 border border-white/10 mb-4 shadow-lg backdrop-blur-md overflow-hidden">
+                <img src="logo.png" alt="Grok Subscriptions Logo" class="w-12 h-12 object-contain drop-shadow-lg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <!-- SVG dự phòng hiển thị nếu logo.png bị lỗi -->
+                <svg style="display: none;" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#gradient)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <defs>
+                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#38bdf8" />
+                            <stop offset="100%" stop-color="#818cf8" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">
+                Grok Subscriptions
+            </h1>
+            <p class="text-sm text-slate-500 mt-2 font-medium">Realtime Tracker & Analytics Dashboard</p>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="glass-panel rounded-3xl p-6 md:p-10 fade-in-up relative overflow-hidden" style="animation-delay: 0.1s;">
+            
+            <!-- Tab Buttons -->
+            <div class="flex gap-2 mb-8 bg-black/20 p-1.5 rounded-xl w-fit mx-auto border border-white/5">
+                <button onclick="switchTab('input')" id="tab-btn-input" class="px-6 py-2 rounded-lg text-sm font-semibold transition-all duration-300 bg-white/10 text-white shadow-sm">
+                    Phân Tích JSON
+                </button>
+                <button onclick="switchTab('guide')" id="tab-btn-guide" class="px-6 py-2 rounded-lg text-sm font-semibold transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5">
+                    Hướng Dẫn Lấy
+                </button>
+            </div>
+
+            <!-- Tab: Input -->
+            <div id="tab-input" class="block">
+                <div class="relative group">
+                    <div class="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-500"></div>
+                    <div class="relative bg-[#0a0a0a] rounded-2xl p-1 border border-white/10">
+                        <div class="flex justify-between items-center px-4 pt-3 pb-2">
+                            <label for="jsonInput" class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Mã JSON Dữ Liệu</label>
+                            <button onclick="loadSample()" class="text-xs font-medium text-blue-400 hover:text-blue-300 transition-colors bg-blue-500/10 px-3 py-1 rounded-full">
+                                Chèn JSON Mẫu
+                            </button>
+                        </div>
+                        <textarea id="jsonInput" rows="6" class="w-full bg-transparent border-none rounded-xl p-4 text-sm font-mono text-slate-300 focus:outline-none focus:ring-0 resize-y leading-relaxed placeholder-slate-700" spellcheck="false" placeholder='{&#10;  "subscriptions": [&#10;    ...&#10;  ]&#10;}'></textarea>
+                    </div>
+                </div>
+                
+                <button onclick="processJSON()" class="mt-6 w-full relative group overflow-hidden rounded-2xl p-[1px]">
+                    <span class="absolute inset-0 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 opacity-70 group-hover:opacity-100 transition-opacity duration-300"></span>
+                    <div class="relative bg-black/50 backdrop-blur-md px-6 py-4 rounded-2xl flex justify-center items-center gap-2 transition-all duration-300 group-hover:bg-transparent">
+                        <span class="font-bold text-white tracking-wide">Xử Lý Dữ Liệu</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white transform group-hover:translate-x-1 transition-transform"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </div>
+                </button>
+
+                <!-- Error Message -->
+                <div id="errorBox" class="hidden mt-6 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-sm flex items-center gap-3 fade-in">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <span id="errorText">JSON không hợp lệ. Vui lòng kiểm tra lại.</span>
+                </div>
+            </div>
+
+            <!-- Tab: Guide -->
+            <div id="tab-guide" class="hidden text-slate-300">
+                <div class="space-y-6">
+                    <div class="flex items-center gap-3 border-b border-white/5 pb-4">
+                        <div class="p-2 bg-indigo-500/10 rounded-lg text-indigo-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                        </div>
+                        <h2 class="text-lg font-semibold text-white">Cách lấy JSON không cần DevTools</h2>
+                    </div>
+                    
+                    <div class="grid gap-4">
+                        <div class="glass-card rounded-xl p-4 flex gap-4 items-start">
+                            <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center font-mono text-sm text-slate-400 shrink-0">1</div>
+                            <div>Truy cập <a href="https://grok.com" target="_blank" class="text-blue-400 hover:text-blue-300 font-medium transition-colors">grok.com</a> và <strong>đăng nhập</strong> tài khoản Grok của bạn (SuperGrok).</div>
+                        </div>
+                        <div class="glass-card rounded-xl p-4 flex gap-4 items-start">
+                            <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center font-mono text-sm text-slate-400 shrink-0">2</div>
+                            <div class="w-full">
+                                Sau khi đăng nhập, mở đường dẫn API ẩn này trong tab mới:<br>
+                                <a href="https://grok.com/rest/subscriptions" target="_blank" class="block mt-3 px-4 py-2 bg-black/40 border border-white/5 rounded-lg font-mono text-sm text-indigo-300 hover:bg-black/60 transition-colors break-all">grok.com/rest/subscriptions</a>
+                            </div>
+                        </div>
+                        <div class="glass-card rounded-xl p-4 flex gap-4 items-start">
+                            <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center font-mono text-sm text-slate-400 shrink-0">3</div>
+                            <div>Copy toàn bộ chữ trên trang đó (<kbd class="font-mono bg-black/50 px-2 py-0.5 rounded text-slate-300 text-xs border border-white/10">Ctrl+A</kbd> rồi <kbd class="font-mono bg-black/50 px-2 py-0.5 rounded text-slate-300 text-xs border border-white/10">Ctrl+C</kbd>).</div>
+                        </div>
+                        <div class="glass-card rounded-xl p-4 flex gap-4 items-start">
+                            <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center font-mono text-sm text-slate-400 shrink-0">4</div>
+                            <div>Quay lại đây, chọn tab <strong>"Phân Tích JSON"</strong> và dán vào ô trống.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Result View (Hidden initially) -->
+            <div id="resultView" class="hidden mt-10 pt-10 border-t border-white/5">
+                
+                <!-- Head Info -->
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">XAI User ID</p>
+                        <div class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            <p id="uidDisplay" class="font-mono text-lg text-white font-medium"></p>
+                        </div>
+                    </div>
+                    <div id="statusBadge" class="px-4 py-2 rounded-full text-xs font-bold tracking-widest uppercase border flex items-center gap-2 shadow-lg">
+                        <span class="relative flex h-2.5 w-2.5">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-current opacity-40"></span>
+                          <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-current"></span>
+                        </span>
+                        <span id="statusText"></span>
+                    </div>
+                </div>
+
+                <!-- Cards Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    <div class="glass-card rounded-2xl p-5">
+                        <div class="flex items-center gap-2 text-slate-400 mb-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+                            <p class="text-[11px] font-semibold uppercase tracking-widest">Gói Cước</p>
+                        </div>
+                        <p id="packageDisplay" class="text-base font-bold text-white"></p>
+                    </div>
+                    
+                    <div class="glass-card rounded-2xl p-5">
+                        <div class="flex items-center gap-2 text-slate-400 mb-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                            <p class="text-[11px] font-semibold uppercase tracking-widest">Ngày Tạo TK</p>
+                        </div>
+                        <p id="creationDateDisplay" class="font-mono text-sm text-slate-200"></p>
+                    </div>
+
+                    <div class="glass-card rounded-2xl p-5">
+                        <div class="flex items-center gap-2 text-slate-400 mb-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 14 4-4 4 4"/><path d="M16 10v12"/><path d="M2 18h10"/></svg>
+                            <p class="text-[11px] font-semibold uppercase tracking-widest">Ngày Nâng Cấp</p>
+                        </div>
+                        <p id="upgradeDateDisplay" class="font-mono text-sm text-slate-200"></p>
+                    </div>
+                </div>
+
+                <!-- Purchase Token Card -->
+                <div class="glass-card rounded-2xl p-5 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div class="w-full overflow-hidden">
+                        <div class="flex items-center gap-2 text-slate-400 mb-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+                            <p class="text-[11px] font-semibold uppercase tracking-widest">Purchase Token</p>
+                        </div>
+                        <p id="tokenDisplay" class="font-mono text-xs sm:text-sm text-slate-300 break-all bg-black/40 p-3 rounded-lg border border-white/5"></p>
+                    </div>
+                    <button onclick="copyToken()" class="shrink-0 flex items-center gap-2 px-4 py-3 sm:py-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded-lg transition-colors border border-blue-500/20 w-full sm:w-auto justify-center group">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:scale-110 transition-transform"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                        <span class="text-xs font-semibold uppercase tracking-wider" id="copyBtnText">Copy</span>
+                    </button>
+                </div>
+
+                <!-- Hero Countdown -->
+                <div class="relative rounded-3xl p-8 md:p-12 text-center overflow-hidden border border-white/5 bg-black/40">
+                    <div class="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent pointer-events-none"></div>
+                    
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2">Thời gian hết hạn</p>
+                    <p id="expiryDateDisplay" class="font-mono text-lg md:text-xl text-white mb-10 font-medium"></p>
+
+                    <!-- Đồng hồ -->
+                    <div id="countdownGrid" class="flex items-center justify-center gap-2 md:gap-6 font-mono relative z-10 w-full">
+                        <!-- Ngày -->
+                        <div class="flex flex-col items-center w-20 md:w-28">
+                            <span id="c-days" class="text-5xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-400 text-glow breathe">00</span>
+                            <span class="text-[10px] md:text-xs text-slate-500 mt-4 uppercase tracking-widest font-sans font-semibold bg-white/5 px-3 py-1 rounded-full border border-white/5">Ngày</span>
+                        </div>
+                        <span class="text-3xl md:text-5xl font-light text-slate-700 pb-10 blink">:</span>
+                        
+                        <!-- Giờ -->
+                        <div class="flex flex-col items-center w-20 md:w-28">
+                            <span id="c-hours" class="text-5xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-400 text-glow breathe" style="animation-delay: 0.2s">00</span>
+                            <span class="text-[10px] md:text-xs text-slate-500 mt-4 uppercase tracking-widest font-sans font-semibold bg-white/5 px-3 py-1 rounded-full border border-white/5">Giờ</span>
+                        </div>
+                        <span class="text-3xl md:text-5xl font-light text-slate-700 pb-10 blink">:</span>
+                        
+                        <!-- Phút -->
+                        <div class="flex flex-col items-center w-20 md:w-28">
+                            <span id="c-minutes" class="text-5xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-400 text-glow breathe" style="animation-delay: 0.4s">00</span>
+                            <span class="text-[10px] md:text-xs text-slate-500 mt-4 uppercase tracking-widest font-sans font-semibold bg-white/5 px-3 py-1 rounded-full border border-white/5">Phút</span>
+                        </div>
+                        <span class="text-3xl md:text-5xl font-light text-slate-700 pb-10 blink">:</span>
+                        
+                        <!-- Giây -->
+                        <div class="flex flex-col items-center w-20 md:w-28">
+                            <span id="c-seconds" class="text-5xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-blue-300 to-indigo-500 breathe" style="animation-delay: 0.6s">00</span>
+                            <span class="text-[10px] md:text-xs text-slate-500 mt-4 uppercase tracking-widest font-sans font-semibold bg-white/5 px-3 py-1 rounded-full border border-white/5">Giây</span>
+                        </div>
+                    </div>
+
+                    <!-- Lời nhắn hết hạn -->
+                    <div id="expiredMessage" class="hidden text-xl md:text-2xl font-bold text-red-400 mt-6 flex items-center justify-center gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        Gói cước đã hết hạn
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let countdownInterval;
+
+        // Xử lý Tab mượt mà
+        function switchTab(tabName) {
+            const tabs = ['input', 'guide'];
+            tabs.forEach(tab => {
+                const content = document.getElementById(`tab-${tab}`);
+                const btn = document.getElementById(`tab-btn-${tab}`);
+                
+                if (tab === tabName) {
+                    content.classList.remove('hidden');
+                    content.classList.add('fade-in');
+                    btn.className = "px-6 py-2 rounded-lg text-sm font-semibold transition-all duration-300 bg-white/10 text-white shadow-sm";
+                } else {
+                    content.classList.add('hidden');
+                    content.classList.remove('fade-in');
+                    btn.className = "px-6 py-2 rounded-lg text-sm font-semibold transition-all duration-300 text-slate-400 hover:text-white hover:bg-white/5";
+                }
+            });
+        }
+
+        function loadSample() {
+            const sampleData = `{"subscriptions":[{"google":{"purchaseToken":"mock_token_1","productId":"grok.pro","basePlanId":"p1m","expiryTime":"2026-03-21T10:41:33.070Z"},"xaiUserId":"57f48d02-7242-48fd-97d5-3940ec9f4951","tier":"SUBSCRIPTION_TIER_GROK_PRO","status":"SUBSCRIPTION_STATUS_INACTIVE","createTime":"2026-03-21T10:40:57.917Z"}, {"google":{"purchaseToken":"mock_token_2","productId":"grok.pro","basePlanId":"p1m","expiryTime":"2027-04-30T11:02:56.823Z"},"xaiUserId":"57f48d02-7242-48fd-97d5-3940ec9f4951","tier":"SUBSCRIPTION_TIER_GROK_PRO","status":"SUBSCRIPTION_STATUS_ACTIVE","createTime":"2026-03-21T14:13:24.618Z"}]}`;
+            document.getElementById('jsonInput').value = sampleData;
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return "--/--/----";
+            const date = new Date(dateString);
+            return date.toLocaleDateString('vi-VN', {
+                year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
+            });
+        }
+
+        // Parse format Tên Gói
+        function formatPackageName(tierStr, productId) {
+            // Hiển thị SuperGrok theo yêu cầu
+            if (tierStr === "SUBSCRIPTION_TIER_GROK_PRO") return "SuperGrok";
+
+            if (tierStr) {
+                // Biến các tier khác thành dạng chữ dễ đọc
+                let name = tierStr.replace('SUBSCRIPTION_TIER_', '').replace(/_/g, ' ');
+                return name.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+            }
+            if (productId) {
+                return productId.replace('.', ' ').toUpperCase();
+            }
+            return "Unknown Package";
+        }
+
+        function processJSON() {
+            const inputData = document.getElementById('jsonInput').value.trim();
+            const errorBox = document.getElementById('errorBox');
+            const resultView = document.getElementById('resultView');
+            
+            if (!inputData) {
+                document.getElementById('errorText').innerText = "Vui lòng nhập mã JSON vào ô trống.";
+                errorBox.classList.remove('hidden');
+                resultView.classList.add('hidden');
+                return;
+            }
+
+            try {
+                const parsedData = JSON.parse(inputData);
+                const subscriptions = parsedData.subscriptions;
+
+                if (!subscriptions || !Array.isArray(subscriptions) || subscriptions.length === 0) {
+                    throw new Error("Không tìm thấy mảng 'subscriptions'.");
+                }
+
+                // Tìm Ngày tạo tài khoản (sớm nhất)
+                const earliestSub = subscriptions.reduce((min, p) => {
+                    if (!p.createTime) return min;
+                    if (!min.createTime) return p;
+                    return new Date(p.createTime) < new Date(min.createTime) ? p : min;
+                }, subscriptions[0]);
+                
+                // Tìm Gói Active hoặc Gói mới nhất
+                let activeSub = subscriptions.find(sub => sub.status === "SUBSCRIPTION_STATUS_ACTIVE");
+                if (!activeSub) {
+                    activeSub = subscriptions.reduce((latest, current) => {
+                        if (!current.google || !current.google.expiryTime) return latest;
+                        if (!latest.google || !latest.google.expiryTime) return current;
+                        return new Date(current.google.expiryTime) > new Date(latest.google.expiryTime) ? current : latest;
+                    });
+                }
+
+                if (!activeSub || !activeSub.google || !activeSub.google.expiryTime) {
+                    throw new Error("Dữ liệu không đầy đủ chi tiết thời hạn.");
+                }
+
+                displayData(activeSub, earliestSub.createTime, activeSub.createTime);
+                
+                errorBox.classList.add('hidden');
+                resultView.classList.remove('hidden');
+                resultView.classList.add('fade-in-up');
+                
+                setTimeout(() => resultView.scrollIntoView({ behavior: 'smooth', block: 'end' }), 100);
+
+            } catch (error) {
+                document.getElementById('errorText').innerText = error.message || "JSON không đúng định dạng.";
+                errorBox.classList.remove('hidden');
+                resultView.classList.add('hidden');
+                if(countdownInterval) clearInterval(countdownInterval);
+            }
+        }
+
+        function displayData(subscription, creationDateStr, upgradeDateStr) {
+            // UID
+            document.getElementById('uidDisplay').innerText = subscription.xaiUserId || "N/A";
+
+            // Purchase Token
+            document.getElementById('tokenDisplay').innerText = subscription.google?.purchaseToken || "Không có thông tin";
+
+            // Tên gói cước
+            const pkgName = formatPackageName(subscription.tier, subscription.google?.productId);
+            document.getElementById('packageDisplay').innerText = pkgName;
+
+            // Ngày tạo / Nâng cấp
+            document.getElementById('creationDateDisplay').innerText = formatDate(creationDateStr);
+            document.getElementById('upgradeDateDisplay').innerText = formatDate(upgradeDateStr);
+
+            // Trạng thái Badge
+            const statusBadge = document.getElementById('statusBadge');
+            const statusText = document.getElementById('statusText');
+            
+            if (subscription.status === "SUBSCRIPTION_STATUS_ACTIVE") {
+                statusText.innerText = "ĐANG HOẠT ĐỘNG";
+                statusBadge.className = "px-4 py-2 rounded-full text-[10px] sm:text-xs font-bold tracking-widest uppercase border flex items-center gap-2 shadow-lg text-emerald-400 border-emerald-500/30 bg-emerald-500/10";
+            } else {
+                statusText.innerText = "KHÔNG HOẠT ĐỘNG";
+                statusBadge.className = "px-4 py-2 rounded-full text-[10px] sm:text-xs font-bold tracking-widest uppercase border flex items-center gap-2 shadow-lg text-slate-400 border-slate-700 bg-slate-800/50";
+                // Xoá hiệu ứng ping nếu không active
+                statusBadge.querySelector('.animate-ping')?.remove();
+            }
+
+            // Thời gian
+            const expiryDate = new Date(subscription.google.expiryTime);
+            document.getElementById('expiryDateDisplay').innerText = formatDate(subscription.google.expiryTime);
+
+            startCountdown(expiryDate);
+        }
+
+        function startCountdown(expiryDate) {
+            if (countdownInterval) clearInterval(countdownInterval);
+
+            const grid = document.getElementById('countdownGrid');
+            const expMsg = document.getElementById('expiredMessage');
+
+            const updateTimer = () => {
+                const now = new Date().getTime();
+                const distance = expiryDate.getTime() - now;
+
+                if (distance < 0) {
+                    clearInterval(countdownInterval);
+                    grid.classList.add('hidden');
+                    expMsg.classList.remove('hidden');
+                    return;
+                } else {
+                    grid.classList.remove('hidden');
+                    expMsg.classList.add('hidden');
+                }
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById('c-days').innerText = String(days).padStart(2, '0');
+                document.getElementById('c-hours').innerText = String(hours).padStart(2, '0');
+                document.getElementById('c-minutes').innerText = String(minutes).padStart(2, '0');
+                document.getElementById('c-seconds').innerText = String(seconds).padStart(2, '0');
+            };
+
+            updateTimer();
+            countdownInterval = setInterval(updateTimer, 1000);
+        }
+
+        // Chức năng Copy Token an toàn
+        function copyToken() {
+            const tokenText = document.getElementById('tokenDisplay').innerText;
+            if (tokenText && tokenText !== "Không có thông tin") {
+                // Sử dụng text area ẩn để copy (tương thích iframe)
+                const textArea = document.createElement("textarea");
+                textArea.value = tokenText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    const btnText = document.getElementById('copyBtnText');
+                    btnText.innerText = "Đã Copy!";
+                    setTimeout(() => { btnText.innerText = "Copy"; }, 2000);
+                } catch (err) {
+                    console.error('Lỗi khi copy', err);
+                }
+                document.body.removeChild(textArea);
+            }
+        }
+    </script>
+</body>
+</html>
