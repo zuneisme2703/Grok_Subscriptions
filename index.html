@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grok Pro Tracker</title>
+    <!-- Lệnh chèn logo vào tab trình duyệt (Favicon) -->
+    <link rel="icon" href="logo2.png" type="image/png">
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -98,6 +101,12 @@
             0% { transform: translate(0, 0) scale(1); }
             100% { transform: translate(30px, 50px) scale(1.1); }
         }
+
+        .blink { animation: blinker 1.5s ease-in-out infinite; }
+        @keyframes blinker { 
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.2; } 
+        }
     </style>
 </head>
 <body class="min-h-screen relative flex justify-center p-4 sm:p-8">
@@ -111,9 +120,8 @@
         <!-- Header -->
         <header class="mb-10 text-center fade-in-up" style="animation-delay: 0s;">
             <div class="inline-flex items-center justify-center p-3 rounded-2xl bg-white/5 border border-white/10 mb-4 shadow-lg backdrop-blur-md overflow-hidden">
-                <link rel="icon" href="logo2.png" type="image/png">
                 <img src="logo2.png" alt="Grok Subscriptions Logo" class="w-12 h-12 object-contain drop-shadow-lg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                <!-- SVG dự phòng hiển thị nếu logo.png bị lỗi -->
+                <!-- SVG dự phòng hiển thị nếu logo2.png bị lỗi -->
                 <svg style="display: none;" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#gradient)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <defs>
                         <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -204,6 +212,23 @@
                             <div>Quay lại đây, chọn tab <strong>"Phân Tích JSON"</strong> và dán vào ô trống.</div>
                         </div>
                     </div>
+
+                    <!-- Hướng dẫn chèn logo (Tuỳ chọn) -->
+                    <div class="glass-card rounded-xl p-5 flex gap-4 items-start bg-gradient-to-r from-blue-500/5 to-transparent border-blue-500/10 mt-6">
+                        <div class="p-2 bg-blue-500/10 rounded-lg text-blue-400 shrink-0 mt-0.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-semibold text-white mb-2">Tùy chỉnh Logo & Icon Tab (Tùy chọn)</h3>
+                            <p class="text-sm text-slate-400 leading-relaxed">Để trang web hiển thị logo của riêng bạn ở <strong>giữa màn hình</strong> và trên <strong>tab trình duyệt (favicon)</strong>:</p>
+                            <ul class="list-disc ml-5 mt-2 text-sm text-slate-400 space-y-1 marker:text-slate-600">
+                                <li>Chuẩn bị một hình ảnh vuông (khuyên dùng PNG nền trong suốt).</li>
+                                <li>Đổi tên hình ảnh đó thành chính xác là <code class="font-mono text-blue-300 bg-blue-500/10 px-1.5 py-0.5 rounded border border-blue-500/20">logo2.png</code>.</li>
+                                <li>Đặt file ảnh này vào <strong>cùng một thư mục</strong> với file HTML của công cụ này. Khởi động lại trang là xong!</li>
+                            </ul>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
