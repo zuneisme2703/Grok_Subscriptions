@@ -83,12 +83,6 @@
             will-change: transform;
         }
 
-        .blink { animation: blinker 1.5s ease-in-out infinite; }
-        @keyframes blinker { 
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.2; } 
-        }
-
         /* Khối màu nền động */
         .bg-orb {
             position: fixed;
@@ -240,7 +234,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
                             <p class="text-[11px] font-semibold uppercase tracking-widest">Gói Cước</p>
                         </div>
-                        <p id="packageDisplay" class="text-base font-bold text-white"></p>
+                        <div id="packageDisplay" class="mt-1 flex items-center min-h-[32px]"></div>
                     </div>
                     
                     <div class="glass-card rounded-2xl p-5">
@@ -276,39 +270,60 @@
                 </div>
 
                 <!-- Hero Countdown -->
-                <div class="relative rounded-3xl p-8 md:p-12 text-center overflow-hidden border border-white/5 bg-black/40">
+                <div class="relative rounded-3xl p-6 sm:p-8 md:p-12 text-center overflow-hidden border border-white/5 bg-black/40">
                     <div class="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent pointer-events-none"></div>
                     
                     <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2">Thời gian hết hạn</p>
                     <p id="expiryDateDisplay" class="font-mono text-lg md:text-xl text-white mb-10 font-medium"></p>
 
-                    <!-- Đồng hồ -->
-                    <div id="countdownGrid" class="flex items-center justify-center gap-2 md:gap-6 font-mono relative z-10 w-full">
-                        <!-- Ngày -->
-                        <div class="flex flex-col items-center w-20 md:w-28">
-                            <span id="c-days" class="text-5xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-400 text-glow breathe">00</span>
-                            <span class="text-[10px] md:text-xs text-slate-500 mt-4 uppercase tracking-widest font-sans font-semibold bg-white/5 px-3 py-1 rounded-full border border-white/5">Ngày</span>
-                        </div>
-                        <span class="text-3xl md:text-5xl font-light text-slate-700 pb-10 blink">:</span>
+                    <!-- Đồng hồ chia 2 dòng: Ngày nổi bật, Giờ phút giây phụ -->
+                    <div id="countdownGrid" class="flex flex-col items-center justify-center gap-6 md:gap-8 font-mono relative z-10 w-full">
                         
-                        <!-- Giờ -->
-                        <div class="flex flex-col items-center w-20 md:w-28">
-                            <span id="c-hours" class="text-5xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-400 text-glow breathe" style="animation-delay: 0.2s">00</span>
-                            <span class="text-[10px] md:text-xs text-slate-500 mt-4 uppercase tracking-widest font-sans font-semibold bg-white/5 px-3 py-1 rounded-full border border-white/5">Giờ</span>
+                        <!-- Dòng 1: Năm, Tháng, Ngày (Nổi bật) -->
+                        <div class="flex flex-wrap justify-center gap-6 sm:gap-10">
+                            <!-- Năm -->
+                            <div id="container-years" class="flex flex-col items-center min-w-[70px] md:min-w-[100px]">
+                                <span id="c-years" class="text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white via-blue-100 to-blue-300 text-glow breathe" style="animation-delay: 0s">0</span>
+                                <span class="text-[10px] md:text-xs text-slate-300 mt-4 uppercase tracking-widest font-sans font-bold bg-white/10 px-4 py-1.5 rounded-full border border-white/20 shadow-md">Năm</span>
+                            </div>
+                            
+                            <!-- Tháng -->
+                            <div id="container-months" class="flex flex-col items-center min-w-[70px] md:min-w-[100px]">
+                                <span id="c-months" class="text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white via-blue-100 to-blue-300 text-glow breathe" style="animation-delay: 0.2s">0</span>
+                                <span class="text-[10px] md:text-xs text-slate-300 mt-4 uppercase tracking-widest font-sans font-bold bg-white/10 px-4 py-1.5 rounded-full border border-white/20 shadow-md">Tháng</span>
+                            </div>
+
+                            <!-- Ngày -->
+                            <div id="container-days" class="flex flex-col items-center min-w-[70px] md:min-w-[100px]">
+                                <span id="c-days" class="text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white via-blue-100 to-blue-300 text-glow breathe" style="animation-delay: 0.4s">0</span>
+                                <span class="text-[10px] md:text-xs text-slate-300 mt-4 uppercase tracking-widest font-sans font-bold bg-white/10 px-4 py-1.5 rounded-full border border-white/20 shadow-md">Ngày</span>
+                            </div>
                         </div>
-                        <span class="text-3xl md:text-5xl font-light text-slate-700 pb-10 blink">:</span>
-                        
-                        <!-- Phút -->
-                        <div class="flex flex-col items-center w-20 md:w-28">
-                            <span id="c-minutes" class="text-5xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-400 text-glow breathe" style="animation-delay: 0.4s">00</span>
-                            <span class="text-[10px] md:text-xs text-slate-500 mt-4 uppercase tracking-widest font-sans font-semibold bg-white/5 px-3 py-1 rounded-full border border-white/5">Phút</span>
-                        </div>
-                        <span class="text-3xl md:text-5xl font-light text-slate-700 pb-10 blink">:</span>
-                        
-                        <!-- Giây -->
-                        <div class="flex flex-col items-center w-20 md:w-28">
-                            <span id="c-seconds" class="text-5xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-blue-300 to-indigo-500 breathe" style="animation-delay: 0.6s">00</span>
-                            <span class="text-[10px] md:text-xs text-slate-500 mt-4 uppercase tracking-widest font-sans font-semibold bg-white/5 px-3 py-1 rounded-full border border-white/5">Giây</span>
+
+                        <!-- Đường phân cách nhẹ -->
+                        <div class="h-px w-32 bg-gradient-to-r from-transparent via-white/20 to-transparent my-2"></div>
+
+                        <!-- Dòng 2: Giờ, Phút, Giây (Nhỏ hơn) -->
+                        <div class="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
+                            <!-- Giờ -->
+                            <div class="flex flex-col items-center min-w-[60px]">
+                                <span id="c-hours" class="text-4xl md:text-5xl font-semibold text-slate-200 text-glow">00</span>
+                                <span class="text-[10px] text-slate-500 mt-2 uppercase tracking-widest font-sans font-medium">Giờ</span>
+                            </div>
+                            <span class="text-2xl md:text-3xl font-light text-slate-600 pb-5 blink">:</span>
+                            
+                            <!-- Phút -->
+                            <div class="flex flex-col items-center min-w-[60px]">
+                                <span id="c-minutes" class="text-4xl md:text-5xl font-semibold text-slate-200 text-glow">00</span>
+                                <span class="text-[10px] text-slate-500 mt-2 uppercase tracking-widest font-sans font-medium">Phút</span>
+                            </div>
+                            <span class="text-2xl md:text-3xl font-light text-slate-600 pb-5 blink">:</span>
+                            
+                            <!-- Giây -->
+                            <div class="flex flex-col items-center min-w-[60px]">
+                                <span id="c-seconds" class="text-4xl md:text-5xl font-semibold text-blue-400 text-glow">00</span>
+                                <span class="text-[10px] text-blue-500 mt-2 uppercase tracking-widest font-sans font-medium">Giây</span>
+                            </div>
                         </div>
                     </div>
 
@@ -441,7 +456,21 @@
 
             // Tên gói cước
             const pkgName = formatPackageName(subscription.tier, subscription.google?.productId);
-            document.getElementById('packageDisplay').innerText = pkgName;
+            const packageContainer = document.getElementById('packageDisplay');
+            
+            if (pkgName === "SuperGrok") {
+                packageContainer.innerHTML = `
+                    <div class="inline-flex p-[1.5px] rounded-lg bg-[linear-gradient(45deg,#fbbf24,#ffffff)] shadow-[0_0_15px_rgba(251,191,36,0.2)]">
+                        <div class="bg-[#050505] px-3 py-1 rounded-[6.5px] w-full flex items-center justify-center">
+                            <span class="font-black text-transparent bg-clip-text bg-[linear-gradient(45deg,#fbbf24,#ffffff)] tracking-wider">
+                                SuperGrok
+                            </span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                packageContainer.innerHTML = `<span class="text-base font-bold text-white">${pkgName}</span>`;
+            }
 
             // Ngày tạo / Nâng cấp
             document.getElementById('creationDateDisplay').innerText = formatDate(creationDateStr);
@@ -475,8 +504,8 @@
             const expMsg = document.getElementById('expiredMessage');
 
             const updateTimer = () => {
-                const now = new Date().getTime();
-                const distance = expiryDate.getTime() - now;
+                const now = new Date();
+                const distance = expiryDate.getTime() - now.getTime();
 
                 if (distance < 0) {
                     clearInterval(countdownInterval);
@@ -488,12 +517,37 @@
                     expMsg.classList.add('hidden');
                 }
 
-                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                // Tính toán Năm, Tháng, Ngày, Giờ, Phút, Giây dựa trên Date object
+                let years = expiryDate.getFullYear() - now.getFullYear();
+                let months = expiryDate.getMonth() - now.getMonth();
+                let days = expiryDate.getDate() - now.getDate();
+                let hours = expiryDate.getHours() - now.getHours();
+                let minutes = expiryDate.getMinutes() - now.getMinutes();
+                let seconds = expiryDate.getSeconds() - now.getSeconds();
 
-                document.getElementById('c-days').innerText = String(days).padStart(2, '0');
+                // Cân bằng lại nếu có giá trị âm
+                if (seconds < 0) { seconds += 60; minutes--; }
+                if (minutes < 0) { minutes += 60; hours--; }
+                if (hours < 0) { hours += 24; days--; }
+                if (days < 0) {
+                    // Lấy số ngày của tháng trước đó
+                    let prevMonth = new Date(expiryDate.getFullYear(), expiryDate.getMonth(), 0);
+                    days += prevMonth.getDate();
+                    months--;
+                }
+                if (months < 0) { months += 12; years--; }
+
+                // Logic ẩn/hiện Năm và Tháng nếu bằng 0
+                document.getElementById('container-years').style.display = years > 0 ? 'flex' : 'none';
+                document.getElementById('container-months').style.display = months > 0 ? 'flex' : 'none';
+
+                // Hiển thị kết quả lên giao diện
+                // Năm, tháng, ngày: không padding số 0 ở đầu
+                document.getElementById('c-years').innerText = String(years);
+                document.getElementById('c-months').innerText = String(months);
+                document.getElementById('c-days').innerText = String(days);
+                
+                // Giờ, phút, giây: có padding số 0 ở đầu
                 document.getElementById('c-hours').innerText = String(hours).padStart(2, '0');
                 document.getElementById('c-minutes').innerText = String(minutes).padStart(2, '0');
                 document.getElementById('c-seconds').innerText = String(seconds).padStart(2, '0');
